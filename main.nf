@@ -20,6 +20,7 @@ workflow {
             checkIfExists: true
         )
         .ifEmpty { error "No files found matching '${params.input_fcs}'" }
+        .toSortedList()
         .set { input_fcs }
 
     input_wsp = file(params.input_wsp, checkIfExists: true)
