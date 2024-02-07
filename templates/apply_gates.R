@@ -3,7 +3,6 @@
 library(CytoML)
 library(flowWorkspace)
 library(ggcyto)
-install.packages("tidyr")
 library(tidyr)
 
 ws <- open_flowjo_xml("${input_wsp}")
