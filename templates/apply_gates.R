@@ -23,7 +23,6 @@ fcs_files <- list.files(
 )
 cs <- load_cytoset_from_fcs(files=fcs_files)
 
-print(cs)
 gs <- gh_apply_to_cs(gh, cs)
 
 nodelist <- gs_get_pop_paths(gs, path = "auto")
