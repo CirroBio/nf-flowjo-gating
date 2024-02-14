@@ -110,11 +110,11 @@ write.summary.table <- function(dat, pop.name, prefix){
   )
 }
 
-# # Get the median fluorescence intensity for each marker
-# group_map(
-#   gs_pop_get_stats(gs, type=pop.MFI) %>% group_by(pop),
-#   write.summary.MFI
-# )
+# Get the median fluorescence intensity for each marker
+group_map(
+  gs_pop_get_stats(gs, type=pop.MFI) %>% group_by(pop),
+  write.summary.MFI
+)
 
 # Get the robust coefficient of variation for each marker
 gs_pop_get_stats(gs, type=pop.rCV)
