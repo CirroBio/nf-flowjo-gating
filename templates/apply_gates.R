@@ -23,6 +23,38 @@ fcs_files <- list.files(
   pattern="*.fcs",
   full.names=TRUE
 )
+# Write out the metadata information for all files
+write.csv(
+  do.call(
+    rbind,
+    lapply(
+      fcs_files,
+      function(fp){
+        keyword(read.FCS(fp))[
+          c(
+            "\$FIL",
+            "\$TOT",
+            "CREATOR",
+            "TUBE NAME",
+            "\$SRC",
+            "EXPERIMENT NAME",
+            "GUID",
+            "\$DATE",
+            "\$BTIM",
+            "\$ETIM",
+            "\$CYT",
+            "CYTNUM",
+            "EXPORT TIME"
+          )
+        ]
+      }
+    )
+  ),
+  "metadata.csv",
+  quote=FALSE,
+  row.names=FALSE
+)
+
 cs <- load_cytoset_from_fcs(files=fcs_files)
 
 gs <- gh_apply_to_cs(gh, cs)
