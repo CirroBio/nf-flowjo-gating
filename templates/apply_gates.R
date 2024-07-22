@@ -9,6 +9,8 @@ library(matrixStats)
 library(dplyr)
 library(ggplot2)
 
+dir.create("gating", showWarnings = FALSE)
+
 ws <- open_flowjo_xml("${input_wsp}")
 gh <- flowjo_to_gatingset(
   ws,
@@ -29,7 +31,7 @@ nodelist <- gs_get_pop_paths(gs, path = "auto")
 for(node in nodelist){
   if(node != "root"){
     autoplot(gs, node)
-    ggsave(paste("gating.", node, ".pdf", sep=""))
+    ggsave(paste("gating/", node, ".pdf", sep=""))
   }
 }
 
@@ -87,7 +89,8 @@ write.summary.heatmap <- function(dat, pop.name, prefix, zscore=TRUE){
     geom_tile(aes(fill=value)) +
     ggtitle(paste(prefix, pop.name))
   }
-  ggsave(paste(fix.pop.name(pop.name), prefix, "pdf", sep="."))
+  dir.create(fix.pop.name(pop.name), showWarnings = FALSE)
+  ggsave(paste(fix.pop.name(pop.name), paste(prefix, "pdf", sep="."), sep="/"))
 }
 
 fix.pop.name <- function(pop.name){
@@ -95,13 +98,17 @@ fix.pop.name <- function(pop.name){
 }
 
 write.summary.table <- function(dat, pop.name, prefix){
+  dir.create(fix.pop.name(pop.name), showWarnings = FALSE)
   write.table(
     dat,
     file=paste(
       fix.pop.name(pop.name),
-      prefix,
-      "csv",
-      sep="."
+      paste(
+        prefix,
+        "csv",
+        sep="."
+      ),
+      sep="/"
     ),
     sep=",",
     quote=FALSE,
@@ -132,7 +139,7 @@ for(metric in c("percent", "count")){
   )
   write.csv(
     wide,
-    paste("gating", metric, "csv", sep="."),
+    paste("gating", paste(metric, "csv", sep="."), sep="/"),
     row.names=FALSE,
     quote=FALSE
   )
