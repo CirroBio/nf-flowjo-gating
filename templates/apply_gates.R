@@ -121,8 +121,9 @@ write.summary.heatmap <- function(dat, pop.name, prefix, zscore=TRUE){
     geom_tile(aes(fill=value)) +
     ggtitle(paste(prefix, pop.name))
   }
-  dir.create(fix.pop.name(pop.name), showWarnings = FALSE)
-  ggsave(paste(fix.pop.name(pop.name), paste(prefix, "pdf", sep="."), sep="/"))
+  output_folder = paste("subset_summaries", fix.pop.name(pop.name), sep="/")
+  dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
+  ggsave(paste(output_folder, paste(prefix, "pdf", sep="."), sep="/"))
 }
 
 fix.pop.name <- function(pop.name){
@@ -130,11 +131,12 @@ fix.pop.name <- function(pop.name){
 }
 
 write.summary.table <- function(dat, pop.name, prefix){
-  dir.create(fix.pop.name(pop.name), showWarnings = FALSE)
+  output_folder = paste("subset_summaries", fix.pop.name(pop.name), sep="/")
+  dir.create(output_folder, showWarnings = FALSE, recursive=TRUE)
   write.table(
     dat,
     file=paste(
-      fix.pop.name(pop.name),
+      output_folder,
       paste(
         prefix,
         "csv",

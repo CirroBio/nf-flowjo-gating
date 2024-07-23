@@ -13,6 +13,34 @@ process apply_gates {
     template "apply_gates.R"
 }
 
+process make_anndata {
+    container "${params.container}"
+    publishDir "${params.output_directory}", mode: 'copy', overwrite: true
+
+    input:
+    path "*"
+
+    output:
+    path "output.h5ad"
+
+    script:
+    template "make_anndata.py"
+}
+
+process make_plots {
+    container "${params.container}"
+    publishDir "${params.output_directory}", mode: 'copy', overwrite: true
+
+    input:
+    path "input.?.h5ad"
+
+    output:
+    path "*"
+
+    script:
+    template "make_plots.py"
+}
+
 workflow {
     Channel
         .fromPath(
@@ -29,4 +57,24 @@ workflow {
         input_fcs,
         input_wsp
     )
+    
+    // Make an AnnData from the gated data
+    make_anndata(apply_gates.out)
+
+    // If there are any additional summary files provided,
+    // include them in the input for the next process
+    if (params.input_anndata) {
+        make_plots(
+            make_anndata.out.merge(
+                Channel
+                    .fromPath(
+                        "${params.input_anndata}".split(',').toList(),
+                        checkIfExists: true
+                    )
+                    .toSortedList()
+            )
+        )
+    } else {
+        make_plots(make_anndata.out)
+    }
 }
