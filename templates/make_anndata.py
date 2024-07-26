@@ -20,6 +20,8 @@ def main():
                 folder / f"{dtype}.csv",
                 index_col=0
             )
+            # Align the data with the metadata
+            .reindex(index=obs.index)
         )
         for folder in Path("subset_summaries").iterdir()
         if folder.is_dir() and folder.name != "gating"
@@ -41,6 +43,8 @@ def main():
                     .replace('/', '_')
                 )
             )
+            # Align the data with the metadata
+            .reindex(index=obs.index)
         )
         for dtype in ["count", "percent"]
     }
