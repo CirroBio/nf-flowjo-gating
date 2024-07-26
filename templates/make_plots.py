@@ -140,6 +140,7 @@ def make_plot(cytometer: str, cytometer_serial: str, adata: ad.AnnData):
 
 def main():
     adata = read_adata()
+    adata.obs_names_make_unique()
 
     # Parse the DATE column as a datetime with the format DD-Month-YYYY
     # while also adding in the data from the BTIM column
