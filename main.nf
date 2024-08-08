@@ -13,6 +13,20 @@ process apply_gates {
     template "apply_gates.R"
 }
 
+process filter_beads {
+    container "${params.container}"
+    publishDir "${params.output_directory}", mode: 'copy', overwrite: true
+
+    input:
+    path input_fcs
+
+    output:
+    path "*"
+
+    script:
+    template "filter_beads.R"
+}
+
 process make_anndata {
     container "${params.container}"
     publishDir "${params.output_directory}", mode: 'copy', overwrite: true
@@ -51,15 +65,21 @@ workflow {
         .toSortedList()
         .set { input_fcs }
 
-    input_wsp = file(params.input_wsp, checkIfExists: true)
+    if(params.input_wsp) {
+        input_wsp = file(params.input_wsp, checkIfExists: true)
 
-    apply_gates(
-        input_fcs,
-        input_wsp
-    )
+        apply_gates(
+            input_fcs,
+            input_wsp
+        )
+        output = apply_gates.out
+    }else{
+        filter_beads(input_fcs)
+        output = filter_beads.out
+    }
     
     // Make an AnnData from the gated data
-    make_anndata(apply_gates.out)
+    make_anndata(output)
 
     // If there are any additional summary files provided,
     // include them in the input for the next process
