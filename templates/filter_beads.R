@@ -71,7 +71,7 @@ count <- data.frame()
 percent <- data.frame()
 
 # Set the gates using a multiplier on the interquartile range
-gate_size_multiplier <- 4
+gate_size_multiplier <- ${params.gate_size_multiplier}
 print(paste("Gate size:", gate_size_multiplier, "times the IQR"))
 
 # Iterate over each FCS file
