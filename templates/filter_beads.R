@@ -23,6 +23,13 @@ fcs_files <- list.files(
     full.names=TRUE
 )
 
+# When adding the filename to the output, remove the ./ prefix
+fix_filename <- function(fp){
+    if(substr(fp, 1, 2) == "./"){
+        return(substr(fp, 3, nchar(fp)))
+    }
+}
+
 # Write out the metadata information for all files
 write.csv(
     do.call(
@@ -114,7 +121,7 @@ for(fp in fcs_files){
     count <- rbind(
         count,
         data.frame(
-        file=fp,
+        file=fix_filename(fp),
         root=nrow(fcs@exprs),
         beads=sum(beads@subSet)
         )
@@ -122,7 +129,7 @@ for(fp in fcs_files){
     percent <- rbind(
         percent,
         data.frame(
-        file=fp,
+        file=fix_filename(fp),
         root=100,
         beads=100 * sum(beads@subSet) / nrow(fcs@exprs)
         )
@@ -136,10 +143,10 @@ for(fp in fcs_files){
     
     # Compute a summary for each channel using only
     # those measurements which pass the filter
-    root.MFI_vals <- data.frame(file=fp)
-    root.rCV_vals <- data.frame(file=fp)
-    beads.MFI_vals <- data.frame(file=fp)
-    beads.rCV_vals <- data.frame(file=fp)
+    root.MFI_vals <- data.frame(file=fix_filename(fp))
+    root.rCV_vals <- data.frame(file=fix_filename(fp))
+    beads.MFI_vals <- data.frame(file=fix_filename(fp))
+    beads.rCV_vals <- data.frame(file=fix_filename(fp))
     for(channel in colnames(fcs)){
         if(channel == "Time") next
         root.MFI_vals[[channel]] <- mean(fcs@exprs[, channel])
