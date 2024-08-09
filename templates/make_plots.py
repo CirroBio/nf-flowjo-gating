@@ -51,8 +51,8 @@ def make_plot(cytometer: str, cytometer_serial: str, adata: ad.AnnData):
         assert f"{subset}-MFI" in adata.layers
         assert f"{subset}-rCV" in adata.layers
 
-        mfi = adata.to_df(f"{subset}-MFI").drop(columns=["Time"]).sort_index(axis=1)
-        rcv = adata.to_df(f"{subset}-rCV").drop(columns=["Time"]).sort_index(axis=1)
+        mfi = adata.to_df(f"{subset}-MFI").sort_index(axis=1)
+        rcv = adata.to_df(f"{subset}-rCV").sort_index(axis=1)
 
         # Make a heatmap with the MFI and rCV data
         # The rows should be the collectors,
