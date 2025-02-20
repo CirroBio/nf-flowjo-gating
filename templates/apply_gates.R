@@ -9,20 +9,41 @@ library(matrixStats)
 library(dplyr)
 library(ggplot2)
 
+# Set up a function to create any parent folders needed for a particular path
+make_parent_folder <- function(fp){
+  items <- strsplit(fp, "/")[[1]]
+  if(length(items) > 1){
+    folder <- paste(items[1:(length(items)-1)], collapse="/")
+    print(folder)
+    if(!file.exists(folder)){
+      print(paste("Creating parent folder", folder))
+      dir.create(folder, recursive=TRUE)
+    }
+  }
+}
+
+print("Creating directory gating/")
 dir.create("gating", showWarnings = FALSE)
 
+print("Opening gating file ${input_wsp}")
 ws <- open_flowjo_xml("${input_wsp}")
+
+print("Converting to gating set")
 gh <- flowjo_to_gatingset(
   ws,
   includeGates=TRUE,
   name=1,
   execute=FALSE
 )
+
+print("Listing FCS input files (*.fcs)")
 fcs_files <- list.files(
   path=".",
   pattern="*.fcs",
   full.names=TRUE
 )
+
+print("Writing out metadata.csv")
 # Write out the metadata information for all files
 write.csv(
   do.call(
@@ -55,15 +76,21 @@ write.csv(
   row.names=FALSE
 )
 
+print("Loading cytoset from FCS files")
 cs <- load_cytoset_from_fcs(files=fcs_files)
 
+print("Applying gates to input data")
 gs <- gh_apply_to_cs(gh, cs)
 
 nodelist <- gs_get_pop_paths(gs, path = "auto")
 for(node in nodelist){
   if(node != "root"){
+    print(paste("Plotting node", node))
     autoplot(gs, node)
-    ggsave(paste("gating/", node, ".pdf", sep=""))
+    output_fp = paste("gating/", node, ".pdf", sep="")
+    make_parent_folder(output_fp)
+    print(paste("Writing out", output_fp))
+    ggsave(output_fp)
   }
 }
 
@@ -123,7 +150,10 @@ write.summary.heatmap <- function(dat, pop.name, prefix, zscore=TRUE){
   }
   output_folder = paste("subset_summaries", fix.pop.name(pop.name), sep="/")
   dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
-  ggsave(paste(output_folder, paste(prefix, "pdf", sep="."), sep="/"))
+  output_fp = paste(output_folder, paste(prefix, "pdf", sep="."), sep="/")
+  print(paste("Writing out", output_fp))
+  make_parent_folder(output_fp)
+  ggsave(output_fp)
 }
 
 fix.pop.name <- function(pop.name){
@@ -133,17 +163,20 @@ fix.pop.name <- function(pop.name){
 write.summary.table <- function(dat, pop.name, prefix){
   output_folder = paste("subset_summaries", fix.pop.name(pop.name), sep="/")
   dir.create(output_folder, showWarnings = FALSE, recursive=TRUE)
+  output_fp = paste(
+    output_folder,
+    paste(
+      prefix,
+      "csv",
+      sep="."
+    ),
+    sep="/"
+  )
+  print(paste("Writing out", output_fp))
+  make_parent_folder(output_fp)
   write.table(
     dat,
-    file=paste(
-      output_folder,
-      paste(
-        prefix,
-        "csv",
-        sep="."
-      ),
-      sep="/"
-    ),
+    file=output_fp,
     sep=",",
     quote=FALSE,
     row.names=FALSE
