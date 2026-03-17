@@ -1,5 +1,11 @@
-FROM bioconductor/bioconductor_docker:RELEASE_3_17
+FROM continuumio/miniconda3
 
-ADD build.R /usr/local/
-RUN Rscript /usr/local/build.R
+RUN conda install -y -c bioconda -c conda-forge \
+    bioconductor-cytoml \
+    bioconductor-cytolib \
+    bioconductor-flowworkspace \
+    r-tidyr \
+    r-devtools && \
+    conda clean -afy
+
 RUN pip3 install anndata pandas plotly scipy
