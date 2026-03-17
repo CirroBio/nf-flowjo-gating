@@ -80,7 +80,15 @@ print("Loading cytoset from FCS files")
 cs <- load_cytoset_from_fcs(files=fcs_files)
 
 print("Applying gates to input data")
+print("markernames:")
+print(markernames(gh))
+print("getNodes:")
+print(getNodes(gh))
+print("show:")
+print(show(gh))
+print(cs)
 gs <- gh_apply_to_cs(gh, cs)
+print("Done applying gates to input data")
 
 nodelist <- gs_get_pop_paths(gs, path = "auto")
 for(node in nodelist){
