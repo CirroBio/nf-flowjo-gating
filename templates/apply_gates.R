@@ -50,8 +50,10 @@ write.csv(
     rbind,
     lapply(
       fcs_files,
+      # Key each row by file name, which is how the cytoset names samples in the
+      # gating and subset_summaries tables; \$FIL is optional in FCS and may be absent
       function(fp){
-        keyword(read.FCS(fp))[
+        c(sample=basename(fp), keyword(read.FCS(fp))[
           c(
             "\$FIL",
             "\$TOT",
@@ -67,7 +69,7 @@ write.csv(
             "CYTNUM",
             "EXPORT TIME"
           )
-        ]
+        ])
       }
     )
   ),
