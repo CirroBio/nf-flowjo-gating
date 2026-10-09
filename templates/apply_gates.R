@@ -87,7 +87,9 @@ print(getNodes(gh))
 print("show:")
 print(show(gh))
 print(cs)
-gs <- gh_apply_to_cs(gh, cs)
+# gh_apply_to_cs() takes a single GatingHierarchy as the template, so a workspace
+# holding several samples contributes the gates of its first one
+gs <- gh_apply_to_cs(gh[[1]], cs)
 print("Done applying gates to input data")
 
 nodelist <- gs_get_pop_paths(gs, path = "auto")
