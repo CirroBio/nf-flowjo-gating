@@ -36,10 +36,12 @@ gh <- flowjo_to_gatingset(
   execute=FALSE
 )
 
-print("Listing FCS input files (*.fcs)")
+print("Listing FCS input files (.fcs, any case)")
+# Instruments write the extension in either case (e.g. Cytomics FC 500: .FCS)
 fcs_files <- list.files(
   path=".",
-  pattern="*.fcs",
+  pattern="[.]fcs\$",
+  ignore.case=TRUE,
   full.names=TRUE
 )
 
