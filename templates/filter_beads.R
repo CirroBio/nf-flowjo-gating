@@ -17,9 +17,11 @@ dir.create("subset_summaries", showWarnings = FALSE)
 dir.create("subset_summaries/root", showWarnings = FALSE)
 dir.create("subset_summaries/beads", showWarnings = FALSE)
 
+# Instruments write the extension in either case (e.g. Cytomics FC 500: .FCS)
 fcs_files <- list.files(
     path=".",
-    pattern="*.fcs",
+    pattern="[.]fcs\$",
+    ignore.case=TRUE,
     full.names=TRUE
 )
 
