@@ -55,23 +55,25 @@ write.csv(
       # Key each row by file name, which is how the cytoset names samples in the
       # gating and subset_summaries tables; \$FIL is optional in FCS and may be absent
       function(fp){
-        c(sample=basename(fp), keyword(read.FCS(fp))[
-          c(
-            "\$FIL",
-            "\$TOT",
-            "CREATOR",
-            "TUBE NAME",
-            "\$SRC",
-            "EXPERIMENT NAME",
-            "GUID",
-            "\$DATE",
-            "\$BTIM",
-            "\$ETIM",
-            "\$CYT",
-            "CYTNUM",
-            "EXPORT TIME"
-          )
-        ])
+        kw <- keyword(read.FCS(fp))
+        keys <- c(
+          "\$FIL",
+          "\$TOT",
+          "CREATOR",
+          "TUBE NAME",
+          "\$SRC",
+          "EXPERIMENT NAME",
+          "GUID",
+          "\$DATE",
+          "\$BTIM",
+          "\$ETIM",
+          "\$CYT",
+          "CYTNUM",
+          "EXPORT TIME"
+        )
+        # Look up each keyword by name so one missing from the file still gets
+        # its column, as NA, rather than an NA column name
+        c(sample=basename(fp), sapply(keys, function(k) if (is.null(kw[[k]])) NA else kw[[k]]))
       }
     )
   ),

@@ -155,8 +155,10 @@ def main():
 
     adata = adata[adata.obs["DATETIME"].sort_values().index]
 
-    # For each instrument, make a set of plots
-    for (cytometer, cytometer_serial), subset in adata.obs.groupby(["CYT", "CYTNUM"]):
+    # For each instrument, make a set of plots. CYT and CYTNUM are optional FCS
+    # keywords, and groupby would silently drop any sample missing one.
+    instruments = adata.obs[["CYT", "CYTNUM"]].astype(object).fillna("unknown")
+    for (cytometer, cytometer_serial), subset in instruments.groupby(["CYT", "CYTNUM"]):
         make_plot(cytometer, cytometer_serial, adata[subset.index])
 
 
